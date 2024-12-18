@@ -5,7 +5,7 @@ import { FontAwesome, AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 
-function Index() {
+export default function Index() {
 
     const logo = require("../../assets/images/logo.png");
     const router = useRouter();
