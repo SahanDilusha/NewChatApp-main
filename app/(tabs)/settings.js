@@ -89,14 +89,14 @@ export default function Settings() {
                                                 const json = await response.json();
 
                                                 if (json.status) {
-                                                    
+
                                                     const user = JSON.parse(await AsyncStorage.getItem("user"));
                                                     user.name = getName;
                                                     console.log(user);
 
-                                            
+
                                                     await AsyncStorage.setItem("user", JSON.stringify(user));
-                                                    setUser(user); 
+                                                    setUser(user);
                                                     setShow(true);
                                                     console.log("ok");
                                                 } else {

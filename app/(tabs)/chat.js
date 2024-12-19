@@ -19,8 +19,7 @@ export default function Chat() {
     const [getText, setText] = useState("");
     const [showShare, setShowShare] = useState(false);
     const { fromUser, toUser, name } = useLocalSearchParams();
-    const [latestMessageId, setLatestMessageId] = useState(null);
-
+ 
     const logo = require("../../assets/images/dp.png");
 
 
@@ -148,8 +147,6 @@ export default function Chat() {
                     <Feather name="mic" size={24} color="black" />
                 </Pressable>
                 <Pressable style={[styles.justifyContentCenter, styles.absolute, styles.alignItemsCenter, styles.sendBtn, styles.btn]} onPress={async () => {
-
-
 
                     try {
 
