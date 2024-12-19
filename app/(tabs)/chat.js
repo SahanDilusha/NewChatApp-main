@@ -22,10 +22,8 @@ export default function Chat() {
  
     const logo = require("../../assets/images/dp.png");
 
-
     const router = useRouter();
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-
 
     async function Get() {
 
@@ -79,13 +77,11 @@ export default function Chat() {
 
     }
 
-
     useEffect(() => {
 
         Get();
 
     }, [fromUser, toUser]);
-
 
     useFocusEffect(
         useCallback(() => {
