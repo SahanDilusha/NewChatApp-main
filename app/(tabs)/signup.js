@@ -27,7 +27,7 @@ export default function Signup() {
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={[styles.container, styles.main, styles.alignItemsCenter]}>
                         <Pressable style={[styles.justifyContentCenter, styles.alignItemsCenter, styles.pressable2, styles.ph_20]} onPress={() => {
-                            router.back();
+                            router.replace("/main");
                         }}>
                             <AntDesign name="arrowleft" size={24} color="black" />
                         </Pressable>

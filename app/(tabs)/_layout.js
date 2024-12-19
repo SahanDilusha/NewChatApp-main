@@ -47,6 +47,9 @@ export default function TabLayout() {
                         fontSize: 14,
                         fontFamily: "CarosBold",
                     },
+                    tabBarStyle: {
+                        height: 60,
+                    },
                 }} />
             <Tabs.Screen name="calls"
                 options={{
@@ -60,6 +63,9 @@ export default function TabLayout() {
                         fontSize: 14,
                         fontFamily: "CarosBold",
                     },
+                    tabBarStyle: {
+                        display: "none",
+                    }
                 }} />
             <Tabs.Screen name="contacts"
                 options={{
@@ -73,6 +79,9 @@ export default function TabLayout() {
                         fontSize: 14,
                         fontFamily: "CarosBold",
                     },
+                    tabBarStyle: {
+                        display: "none",
+                    }
                 }} />
             <Tabs.Screen name="settings"
                 options={{
@@ -86,8 +95,18 @@ export default function TabLayout() {
                         fontSize: 14,
                         fontFamily: "CarosBold",
                     },
+                    tabBarStyle: {
+                        display: "none",
+                    }
                 }} />
             <Tabs.Screen name="chat" options={{
+                headerShown: false,
+                href: null,
+                tabBarStyle: {
+                    display: "none",
+                }
+            }} />
+            <Tabs.Screen name="main" options={{
                 headerShown: false,
                 href: null,
                 tabBarStyle: {

@@ -1,62 +1,37 @@
-import React from "react";
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import { StyleSheet, Text, View, Pressable, BackHandler } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome, AntDesign } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Index() {
 
     const logo = require("../../assets/images/logo.png");
     const router = useRouter();
 
+    useFocusEffect(
+        useCallback(() => {
+            async function Check() {
+                const json = await AsyncStorage.getItem("user");
+
+                if (!json || json.length === 0) {
+                    router.replace("/(tabs)/main");
+                } else {
+                    router.replace("/(tabs)/home");
+                }
+            }
+            Check();
+        }, [])
+    );
+
     return (
-        <LinearGradient
-            colors={["#43116A", "#0A1832", "#1A1A1A"]}
-            style={styles.container}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-        >
-            <View style={styles.header}>
-                <Image source={logo} style={styles.logo} />
-            </View>
-
-            <View style={styles.titleSection}>
-                <Text style={[styles.title, styles.carosBold]}>Connect friends easily & quickly</Text>
-                <Text style={[styles.subtitle, styles.carosMedium]}>
-                    Our chat app is the perfect way to stay connected with friends and family.
-                </Text>
-            </View>
-
-            {/* Social Buttons Section */}
-            <View style={styles.socialButtons}>
-                <Pressable style={[styles.socialButton, styles.facebook]}>
-                    <FontAwesome name="facebook" size={24} color="#fff" />
-                </Pressable>
-                <Pressable style={[styles.socialButton, styles.google]}>
-                    <AntDesign name="google" size={24} color="#fff" />
-                </Pressable>
-                <Pressable style={[styles.socialButton, styles.apple]}>
-                    <AntDesign name="apple1" size={24} color="#fff" />
-                </Pressable>
-            </View>
-            <Text style={[styles.subtitle2, styles.carosMedium]}>
-                or
-            </Text>
-            <Pressable style={styles.signupButton} onPress={() => {
-                router.replace("/(tabs)/signup");
-            }}>
-                <Text style={[styles.signupText, styles.carosMedium]}>Sign up with mail</Text>
-            </Pressable>
-
-            <Pressable onPress={() => {
-                router.replace("/(tabs)/login");
-            }}>
-                <Text style={styles.footer}>
-                    Existing account? <Text style={[styles.loginLink, styles.carosBold]}>Log in</Text>
-                </Text>
-            </Pressable>
-        </LinearGradient>
+        <SafeAreaView style={[styles.container]}>
+            <Image source={logo} style={[styles.logo]} />
+        </SafeAreaView>
     );
 }
 
@@ -64,7 +39,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 20,
-        justifyContent: "space-between",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#000",
     },
     header: {
         alignItems: "center",

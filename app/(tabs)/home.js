@@ -10,6 +10,7 @@ import { FlashList } from "@shopify/flash-list";
 import ContactItem from "../../component/ContactItem";
 import { useFocusEffect } from "@react-navigation/native";
 import Animated, { FadeInLeft, FadeInUp, FadeOut, FadeOutRight, FadeOutUp } from "react-native-reanimated";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 export default function Home() {
@@ -17,6 +18,8 @@ export default function Home() {
     const [getData, setData] = useState([]);
     const [getShow, setShow] = useState(false);
     const [getText, setText] = useState('');
+    const [getUser, setUser] = useState({});
+
 
 
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
@@ -27,6 +30,12 @@ export default function Home() {
 
     async function Status() {
 
+        const user = JSON.parse(await AsyncStorage.getItem("user"));
+
+        console.log(user);
+
+        setUser(user);
+
         try {
 
             const response = await fetch(`${apiUrl}UserStatusChenge`, {
@@ -36,8 +45,8 @@ export default function Home() {
                 },
                 body: JSON.stringify(
                     {
-                        "id": 5,
-                        "status": 1
+                        "id": user.id,
+                        "status": 1,
                     }
                 ),
             });
@@ -162,7 +171,10 @@ export default function Home() {
                                 status={item.status}
                                 count={item.count}
                                 onPress={() => {
-                                    router.push("/chat");
+                                    router.push({
+                                        pathname: "/(tabs)/chat", 
+                                        params: { fromUser:getUser.id ,toUser:item.toUser, name: item.name },
+                                      });
                                 }} />}
                     />
                 </View>

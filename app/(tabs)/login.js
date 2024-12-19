@@ -12,7 +12,7 @@ export default function Login() {
 
     const [show, setShow] = useState(true);
     const [getPassword, setPassword] = useState("");
-    const [getEmail, setEmail] = useState("");
+    const [getMobile, setMobile] = useState("");
     const [showAlert, setShowAlert] = useState(false);
     const [getMsg, setMsg] = useState("");
 
@@ -28,12 +28,12 @@ export default function Login() {
             <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.container}>
                 <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
                     <View style={[styles.container, styles.main, styles.alignItemsCenter]}>
-                        <Pressable style={[styles.justifyContentCenter, styles.alignItemsCenter, styles.ph_20,styles.pressable2]} onPress={() => {
-                            router.back();
+                        <Pressable style={[styles.justifyContentCenter, styles.alignItemsCenter, styles.ph_20, styles.pressable2]} onPress={() => {
+                            router.replace("/(tabs)/main");
                         }}>
                             <AntDesign name="arrowleft" size={24} color="black" />
                         </Pressable>
-                        <View style={[styles.titleView, styles.ph_20,styles.justifyContentCenter, styles.alignItemsCenter]}>
+                        <View style={[styles.titleView, styles.ph_20, styles.justifyContentCenter, styles.alignItemsCenter]}>
                             <Text style={[styles.title, styles.carosBold, styles.h1]}>Log in to Chatbox</Text>
                             <Text style={[styles.textAlignCenter, styles.subTitle, styles.carosLight]}>Welcome back! Sign in using your social account or email to continue us</Text>
                         </View>
@@ -43,11 +43,11 @@ export default function Login() {
                             <Image source={appleIcon} style={styles.iconImage} />
                         </View>
                         <Text style={[styles.carosLight, styles.text1]}>or</Text>
-                        <View style={[styles.alignItemsCenter, styles.w_100, styles.gap10,styles.ph_20]}>
+                        <View style={[styles.alignItemsCenter, styles.w_100, styles.gap10, styles.ph_20]}>
                             <View style={[styles.w_100]}>
-                                <Text style={[styles.carosMedium, styles.subTitle, styles.color]}>Email</Text>
-                                <TextInput style={[styles.input, styles.carosMedium, styles.subTitle]} inputMode="email" onChangeText={(text) => {
-                                    setEmail(text);
+                                <Text style={[styles.carosMedium, styles.subTitle, styles.color]}>Mobile</Text>
+                                <TextInput style={[styles.input, styles.carosMedium, styles.subTitle]} inputMode="tel" onChangeText={(text) => {
+                                    setMobile(text);
                                 }} />
                             </View>
                             <View style={[styles.w_100]}>
@@ -62,7 +62,7 @@ export default function Login() {
                                 </Pressable>
                             </View>
                         </View>
-                        <View style={[styles.justifyContentCenter, styles.alignItemsCenter, styles.gap10, styles.w_100, styles.pressableView,styles.ph_20]}>
+                        <View style={[styles.justifyContentCenter, styles.alignItemsCenter, styles.gap10, styles.w_100, styles.pressableView, styles.ph_20]}>
                             <Pressable style={[styles.alignItemsCenter, styles.justifyContentCenter, styles.w_100, styles.pressable1]} onPress={async () => {
                                 try {
                                     const response = await fetch(`${apiUrl}Login`, {
@@ -71,7 +71,7 @@ export default function Login() {
                                             'Content-Type': 'application/json',
                                         },
                                         body: JSON.stringify({
-                                            email: getEmail,
+                                            mobile: getMobile,
                                             password: getPassword,
                                         }),
                                     });
@@ -81,7 +81,7 @@ export default function Login() {
 
                                         if (json.status) {
                                             console.log("ok");
-                                            await AsyncStorage.setItem(JSON.stringify(json.content));
+                                            await AsyncStorage.setItem("user",JSON.stringify(json.content));
                                             router.replace("/(tabs)/home");
                                         } else {
                                             setMsg(json.content);
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     },
     pressable2: {
         alignSelf: "flex-start",
-        marginTop:10,
+        marginTop: 10,
     },
     ph_20: {
         paddingHorizontal: 20,

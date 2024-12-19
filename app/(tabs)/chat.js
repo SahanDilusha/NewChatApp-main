@@ -10,6 +10,7 @@ import { FlashList } from "@shopify/flash-list";
 import { useFocusEffect } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import Animated, { FadeInDown, FadeOutDown } from "react-native-reanimated";
+import { useLocalSearchParams } from 'expo-router';
 
 
 export default function Chat() {
@@ -17,9 +18,11 @@ export default function Chat() {
     const [getData, setData] = useState([]);
     const [getText, setText] = useState("");
     const [showShare, setShowShare] = useState(false);
+    const { fromUser, toUser, name } = useLocalSearchParams();
+    const [latestMessageId, setLatestMessageId] = useState(null);
 
     const logo = require("../../assets/images/dp.png");
-    
+
 
     const router = useRouter();
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
@@ -36,8 +39,8 @@ export default function Chat() {
                 },
                 body: JSON.stringify(
                     {
-                        "fromUser": 6,
-                        "toUser": 5,
+                        "fromUser": fromUser,
+                        "toUser": toUser,
                     }
                 ),
             });
@@ -50,7 +53,17 @@ export default function Chat() {
 
                 if (json.status) {
 
-                    setData(json.content);
+                    setData((prevData) => {
+                        const dataMap = new Map(prevData.map(chat => [chat.id, chat]));
+    
+                        json.content.forEach(chat => {
+                            dataMap.set(chat.id, chat);
+                        });
+    
+                        return Array.from(dataMap.values()).filter(chat => 
+                            json.content.some(newChat => newChat.id === chat.id)
+                        );
+                    });
 
 
                 } else {
@@ -72,21 +85,18 @@ export default function Chat() {
 
         Get();
 
-    }, []);
+    }, [fromUser, toUser]);
 
 
-    useFocusEffect(useCallback(() => {
-        const interval = setInterval(() => {
+    useFocusEffect(
+        useCallback(() => {
+            const interval = setInterval(() => {
+                Get();
+            }, 5000);
 
-            Get();
-
-        }, 5000);
-
-        return () => {
-            clearInterval(interval);
-        };
-    }, []));
-
+            return () => clearInterval(interval);
+        }, [fromUser, toUser])
+    );
 
     return (
         <SafeAreaView style={[styles.flex1]}>
@@ -94,7 +104,7 @@ export default function Chat() {
             <View style={[styles.flexRow, styles.w_100, styles.gap10, styles.alignItemsCenter, styles.p_20]}>
                 <View style={[styles.flexRow, styles.gap10, styles.justifyContentCenter, styles.alignItemsCenter,]}>
                     <Pressable onPress={() => {
-                        router.back();
+                        router.replace("/(tabs)/home");
                     }} style={[styles.justifyContentCenter, styles.alignItemsCenter]}>
                         <AntDesign name="arrowleft" size={24} color="black" />
                     </Pressable>
@@ -104,7 +114,7 @@ export default function Chat() {
                     </Pressable>
                 </View>
                 <View style={[styles.gap10, styles.flex1]}>
-                    <Text style={[styles.carosMedium, styles.subTitle]} numberOfLines={1}>Jhon Abraham</Text>
+                    <Text style={[styles.carosMedium, styles.subTitle]} numberOfLines={1}>{name}</Text>
                     <Text style={styles.carosLight}>Online</Text>
                 </View>
                 <View style={[styles.flexRow, styles.justifyContentCenter, styles.alignItemsCenter, styles.gap15]}>
@@ -117,12 +127,12 @@ export default function Chat() {
                 </View>
             </View>
             <View style={[styles.flex1, styles.p_10]}>
-                <FlashList contentContainerStyle={styles.p_10} estimatedItemSize={200} data={getData} renderItem={({ item }) =>
-                    <Pressable style={[styles.mb10, styles.gap10, item.fromUser === 6 ? styles.alignSelfEnd : styles.alignSelfStart]}>
+                <FlashList showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} contentContainerStyle={styles.p_10} estimatedItemSize={200} data={getData} renderItem={({ item }) =>
+                    <Pressable style={[styles.mb10, styles.gap10, item.fromUser === parseInt(fromUser) ? styles.alignSelfEnd : styles.alignSelfStart]}>
                         <View style={[styles.justifyContentCenter, styles.alignItemsCenter, item.fromUser === 5 ? styles.view2 : styles.view3]}>
                             <Text style={[styles.carosMedium, styles.color1]}>{item.msg}</Text>
                         </View>
-                        <Text style={[styles.text1, styles.carosLight]}>{item.time} {item.fromUser === 6 ? <FontAwesome5 name={item.status === 2 ? "check" : "check-double"} size={12} color={item.status === 2 ? "#919190" : "#23db9e"} /> : null}</Text>
+                        <Text style={[styles.text1, styles.carosLight]}>{item.time} {item.fromUser === parseInt(fromUser) ? <FontAwesome5 name={item.status === 2 ? "check" : "check-double"} size={12} color={item.status === 2 ? "#919190" : "#23db9e"} /> : null}</Text>
                     </Pressable>} />
             </View>
             <View style={[styles.flexRow, styles.w_100, styles.justifyContentCenter, styles.alignItemsCenter, styles.gap15, styles.p_10]}>
@@ -146,8 +156,8 @@ export default function Chat() {
                         const response = await fetch(`${apiUrl}Save`, {
                             method: 'POST',
                             body: JSON.stringify({
-                                "fromUser": 5,
-                                "toUser": 6,
+                                "fromUser": fromUser,
+                                "toUser": toUser,
                                 "text": getText,
                             }),
                         });
@@ -157,7 +167,6 @@ export default function Chat() {
 
                             if (json.status) {
                                 console.log("true");
-                                await Get();
                                 setText("");
                             } else {
                                 console.log("error1");
