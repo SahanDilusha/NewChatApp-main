@@ -1,12 +1,23 @@
-import { StyleSheet, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { FontAwesome5, AntDesign, Ionicons, Feather, EvilIcons } from "@expo/vector-icons";
+import { useLocalSearchParams,useRouter } from 'expo-router';
+
 
 export default function Settings() {
-    return(
-        <SafeAreaView style={[styles.flex1]}>
-            <View style={[styles.flex1,styles.main]}>
-                <View style={[styles.w_100,styles.header]}>
 
+    const router = useRouter();
+
+    return (
+        <SafeAreaView style={[styles.flex1]}>
+            <View style={[styles.flex1, styles.main, styles.p_20]}>
+                <View style={[styles.w_100, styles.header, styles.flexRow, styles.gap30, styles.alignItemsCenter, styles.justifyContentStart]}>
+                    <Pressable onPress={() => {
+                        router.replace("/(tabs)/home");
+                    }} style={[styles.justifyContentCenter, styles.alignItemsCenter]}>
+                        <AntDesign name="arrowleft" size={28} color="black" />
+                    </Pressable>
+                    <Text style={[styles.carosBold, styles.h1]}>Settings</Text>
                 </View>
             </View>
         </SafeAreaView>
@@ -29,6 +40,9 @@ const styles = StyleSheet.create({
     justifyContentBetween: {
         justifyContent: "space-between",
     },
+    justifyContentStart: {
+        justifyContent: "flex-start",
+    },
     carosMedium: {
         fontFamily: "CarosMedium",
     },
@@ -48,7 +62,7 @@ const styles = StyleSheet.create({
         width: "100%",
     },
     header: {
-        height: "10%",
+        height: "5%",
     },
     view1: {
         backgroundColor: "#fff",
@@ -116,5 +130,8 @@ const styles = StyleSheet.create({
         top: 0,
         paddingHorizontal: 10,
 
+    },
+    flexStart: {
+        alignSelf: "flex-start",
     }
 });
