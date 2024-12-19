@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View, Pressable, TextInput } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { FontAwesome5, AntDesign, Ionicons, Feather, EvilIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
