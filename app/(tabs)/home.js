@@ -21,7 +21,6 @@ export default function Home() {
     const [getUser, setUser] = useState({});
 
 
-
     const apiUrl = process.env.EXPO_PUBLIC_API_URL;
     const logo = require("../../assets/images/logo.png");
     const logo2 = require("../../assets/images/dp_default.png");
@@ -152,7 +151,9 @@ export default function Home() {
                             <AntDesign name="search1" size={20} color="#fff" />
                         </Pressable>
                         <Image source={logo} style={styles.logo} />
-                        <Pressable style={[styles.justifyContentCenter, styles.alignItemsCenter]}>
+                        <Pressable style={[styles.justifyContentCenter, styles.alignItemsCenter]} onPress={()=>{
+                            router.replace("/(tabs)/settings");
+                        }}>
                             <Image source={logo2} style={styles.pressable1} />
                         </Pressable>
                     </View>

@@ -67,22 +67,6 @@ export default function TabLayout() {
                         display: "none",
                     }
                 }} />
-            <Tabs.Screen name="contacts"
-                options={{
-                    headerShown: false,
-                    title: "Contacts",
-                    tabBarIcon: ({ focused }) => {
-                        return <FontAwesome5 name="user-circle" size={28} color={focused ? "#24786D" : "#797C7B"} />
-                    },
-                    tabBarActiveTintColor: "#24786D",
-                    tabBarLabelStyle: {
-                        fontSize: 14,
-                        fontFamily: "CarosBold",
-                    },
-                    tabBarStyle: {
-                        display: "none",
-                    }
-                }} />
             <Tabs.Screen name="settings"
                 options={{
                     headerShown: false,

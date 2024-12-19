@@ -1,25 +1,161 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FontAwesome5, AntDesign, Ionicons, Feather, EvilIcons } from "@expo/vector-icons";
-import { useLocalSearchParams,useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { Image } from "expo-image";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useCallback, useState } from "react";
+import Animated, { FadeInLeft, FadeInUp, FadeOut, FadeOutRight, FadeOutUp } from "react-native-reanimated";
+import MyAlert from "../../component/MyAlert";
 
 
 export default function Settings() {
 
+    const [getUser, setUser] = useState({});
+    const [getName, setName] = useState('');
+    const [getShow, setShow] = useState(true);
+    const [showAlert, setShowAlert] = useState(false);
+    const [getMsg, setMsg] = useState("");
+
     const router = useRouter();
+    const logo2 = require("../../assets/images/dp_default.png");
+    const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+
+    useFocusEffect(
+        useCallback(() => {
+            async function Get() {
+                const user = JSON.parse(await AsyncStorage.getItem("user"));
+
+                console.log(user);
+
+                setUser(user);
+            }
+            Get();
+        }, [])
+    );
 
     return (
         <SafeAreaView style={[styles.flex1]}>
-            <View style={[styles.flex1, styles.main, styles.p_20]}>
+            <View style={[styles.flex1, styles.main, styles.p_20, styles.alignItemsCenter, styles.gap30]}>
                 <View style={[styles.w_100, styles.header, styles.flexRow, styles.gap30, styles.alignItemsCenter, styles.justifyContentStart]}>
                     <Pressable onPress={() => {
+                        setName("");
+                        setShow(true);
                         router.replace("/(tabs)/home");
                     }} style={[styles.justifyContentCenter, styles.alignItemsCenter]}>
                         <AntDesign name="arrowleft" size={28} color="black" />
                     </Pressable>
                     <Text style={[styles.carosBold, styles.h1]}>Settings</Text>
                 </View>
+                <View style={[styles.flex1, styles.w_100, styles.alignItemsCenter, styles.gap30]}>
+                    <Pressable style={[styles.justifyContentCenter, styles.alignItemsCenter]}>
+                        <Image style={[styles.logo]} source={logo2} />
+                    </Pressable>
+                    <View style={[styles.alignItemsCenter, styles.gap10, styles.justifyContentBetween, styles.flexRow, styles.item, styles.w_100]}>
+
+                        {getShow ? <View style={[styles.justifyContentCenter, styles.alignItemsCenter, styles.gap10, styles.flexRow]}>
+                            <AntDesign name="user" size={24} color="black" />
+                            <Text style={[styles.carosRegular, styles.subTitle, styles.carosMedium]}>{getUser.name}</Text>
+                        </View> : <View style={[styles.flex1]}  >
+                            <TextInput style={[styles.flex1, styles.subTitle, styles.input]} placeholder="Your Name" onChangeText={(text) => {
+                                setName(text);
+                            }} />
+                        </View>}
+
+
+                        {getShow ? <Pressable style={[styles.p_10, styles.alignItemsCenter, styles.justifyContentCenter]}
+                            onPress={() => {
+                                setShow(!getShow);
+                            }}>
+                            <Feather name="edit-2" size={20} color="black" />
+                        </Pressable> : <View style={[styles.justifyContentCenter, styles.alignItemsCenter, styles.flexRow]}>
+                            <Pressable
+                                style={[styles.alignItemsCenter, styles.justifyContentCenter, styles.p_10, styles.pressable1]}
+                                onPress={async () => {
+                                    try {
+                                        if (getName.length !== 0) {
+                                            const response = await fetch(`${apiUrl}UpdateName`, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json',
+                                                },
+                                                body: JSON.stringify({
+                                                    id: getUser.id,
+                                                    name: getName,
+                                                }),
+                                            });
+
+                                            if (response.ok) {
+                                                const json = await response.json();
+
+                                                if (json.status) {
+                                                    
+                                                    const user = JSON.parse(await AsyncStorage.getItem("user"));
+                                                    user.name = getName;
+                                                    console.log(user);
+
+                                            
+                                                    await AsyncStorage.setItem("user", JSON.stringify(user));
+                                                    setUser(user); 
+                                                    setShow(true);
+                                                    console.log("ok");
+                                                } else {
+                                                    setMsg(json.content);
+                                                    setShowAlert(true);
+                                                }
+
+                                            } else {
+                                                console.log(response.statusText);
+                                                setMsg("Can't process your request at this time. Please try again later.");
+                                                setShowAlert(true);
+                                            }
+
+                                        } else {
+                                            setMsg("Please enter your name!");
+                                            setShowAlert(true);
+                                        }
+
+                                    } catch (error) {
+                                        console.log("erro01", error);
+                                        setMsg("Can't process your request at this time. Please try again later.");
+                                        setShowAlert(true);
+                                    }
+                                }}
+                            >
+                                <Text>Update</Text>
+                            </Pressable>
+
+                            <Pressable style={[styles.p_10, styles.alignItemsCenter, styles.justifyContentCenter, styles.p_10]}
+                                onPress={() => {
+                                    setShow(!getShow);
+                                }}>
+                                <AntDesign name="close" size={24} color="black" />
+                            </Pressable>
+                        </View>}
+
+                    </View>
+                    <Pressable style={[styles.alignItemsCenter, styles.justifyContentBetween, styles.flexRow, styles.item, styles.w_100]}
+                        onPress={() => {
+                            setShow(!getShow);
+                        }}>
+                        <View style={[styles.justifyContentCenter, styles.alignItemsCenter, styles.gap10, styles.flexRow]}>
+                            <AntDesign name="mobile1" size={24} color="black" />
+                            <Text style={[styles.carosRegular, styles.subTitle, styles.carosMedium]}>{getUser.mobile}</Text>
+                        </View>
+                    </Pressable>
+                    <Pressable style={[styles.alignItemsCenter, styles.justifyContentBetween, styles.flexRow, styles.item, styles.w_100, styles.p_10]}
+                        onPress={async () => {
+                            await AsyncStorage.setItem("user", "");
+                            router.replace("/");
+                        }}>
+                        <Text style={[styles.carosRegular, styles.subTitle, styles.carosMedium, styles.colorRed]}>Log Out</Text>
+                        <AntDesign name="logout" size={24} color="red" />
+                    </Pressable>
+                </View>
             </View>
+            {
+                showAlert && <MyAlert msg={getMsg} title={"Warning"} setShow={setShowAlert} type={"warning"} />
+            }
         </SafeAreaView>
     );
 }
@@ -56,7 +192,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     subTitle: {
-        fontSize: 16,
+        fontSize: 20,
     },
     w_100: {
         width: "100%",
@@ -76,8 +212,11 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     logo: {
-        width: 100,
-        height: 25,
+        width: 150,
+        height: 150,
+        borderRadius: 150,
+        borderStyle: "solid",
+        borderWidth: 2,
     },
     flexRow: {
         flexDirection: 'row',
@@ -85,18 +224,8 @@ const styles = StyleSheet.create({
     pressable1: {
         borderStyle: "solid",
         borderWidth: 1,
-        borderColor: "#fff",
-        width: 40,
-        height: 40,
+        borderColor: "#000",
         borderRadius: 40,
-    },
-    pressable2: {
-        borderStyle: "solid",
-        borderWidth: 2,
-        borderColor: "#fff",
-        width: 60,
-        height: 60,
-        borderRadius: 60,
     },
     gap30: {
         gap: 30,
@@ -133,5 +262,11 @@ const styles = StyleSheet.create({
     },
     flexStart: {
         alignSelf: "flex-start",
-    }
+    },
+    item: {
+        height: 50,
+    },
+    colorRed: {
+        color: "red",
+    },
 });
