@@ -12,7 +12,7 @@ export default function Signup() {
     const [show, setShow] = useState(true);
     const [show1, setShow1] = useState(true);
     const [getName, setName] = useState("");
-    const [getEmail, setEmail] = useState("");
+    const [getMobile, setMobile] = useState("");
     const [getPassword, setPassword] = useState("");
     const [getConfirmPassword, setConfirmPassword] = useState("");
     const [showAlert, setShowAlert] = useState(false);
@@ -32,7 +32,7 @@ export default function Signup() {
                             <AntDesign name="arrowleft" size={24} color="black" />
                         </Pressable>
                         <View style={[styles.titleView, styles.justifyContentCenter, styles.alignItemsCenter, styles.ph_20]}>
-                            <Text style={[styles.title, styles.carosBold, styles.h1]}>Sign up with Email</Text>
+                            <Text style={[styles.title, styles.carosBold, styles.h1]}>Sign up with Mobile</Text>
                             <Text style={[styles.textAlignCenter, styles.subTitle, styles.carosLight]}>Get chatting with friends and family today by signing up for our chat app!</Text>
                         </View>
 
@@ -44,9 +44,9 @@ export default function Signup() {
                                 }} />
                             </View>
                             <View style={[styles.w_100]}>
-                                <Text style={[styles.carosMedium, styles.subTitle, styles.color]}>Your Email</Text>
-                                <TextInput style={[styles.input, styles.carosMedium, styles.subTitle]} inputMode="email" onChangeText={(text) => {
-                                    setEmail(text);
+                                <Text style={[styles.carosMedium, styles.subTitle, styles.color]}>Your Mobile</Text>
+                                <TextInput style={[styles.input, styles.carosMedium, styles.subTitle]} inputMode="tel" onChangeText={(text) => {
+                                    setMobile(text);
                                 }} />
                             </View>
                             <View style={[styles.w_100]}>
@@ -81,7 +81,7 @@ export default function Signup() {
                                         method: 'POST',
                                         body: JSON.stringify({
                                             name: getName,
-                                            email: getEmail,
+                                            mobile: getMobile,
                                             password: getPassword,
                                             confirmPassword: getConfirmPassword,
                                         }),
@@ -95,7 +95,7 @@ export default function Signup() {
 
                                         if (json.status) {
                                             console.log("ok");
-                                            await AsyncStorage.setItem(JSON.stringify(json.content));
+                                            await AsyncStorage.setItem("user",JSON.stringify(json.content));
                                             router.replace("/(tabs)/home");
                                         } else {
                                             setMsg(json.content);
